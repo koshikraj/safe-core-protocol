@@ -35,7 +35,7 @@ abstract contract HooksManager is RegistryManager {
      * @notice Sets hooks on an account. If Zero address is set, manager will not perform pre and post checks for account transactions.
      * @param hooks Address of the hooks to be enabled for msg.sender.
      */
-    function setHooks(address hooks) external onlyAccount {
+    function setHooks(address hooks) virtual external onlyAccount {
         if (hooks != address(0)) {
             checkPermittedModule(hooks, MODULE_TYPE_HOOKS);
             if (!ISafeProtocolHooks(hooks).supportsInterface(type(ISafeProtocolHooks).interfaceId))

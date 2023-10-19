@@ -6,6 +6,7 @@ import yargs from "yargs";
 import { HttpNetworkUserConfig } from "hardhat/types";
 import "hardhat-deploy";
 import { DeterministicDeploymentInfo } from "hardhat-deploy/dist/types";
+import 'hardhat-dependency-compiler';
 import { getSingletonFactoryInfo } from "@safe-global/safe-singleton-factory";
 import { ethers } from "ethers";
 import "./src/tasks/generate_deployments_markdown";
@@ -52,7 +53,17 @@ sharedNetworkConfig.accounts = {
 }
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.18",
+
+  solidity: {
+    version: "0.8.19", // Specify the desired Solidity version
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 200, // Number of runs for the optimizer (adjust as needed)
+      },
+      viaIR: true,
+    },
+  },
   gasReporter: {
     enabled: (process.env.REPORT_GAS) ? true : false
   },
@@ -98,7 +109,26 @@ const config: HardhatUserConfig = {
         ...sharedNetworkConfig,
         url: `https://api.avax.network/ext/bc/C/rpc`,
     },
+    base: {
+      ...sharedNetworkConfig,
+      url: `https://mainnet.base.org`,
+    },
+    base_goerli: {
+      ...sharedNetworkConfig,
+      url: `https://1rpc.io/base-goerli`,
+      gas: 4522512,
+    },
+    optimism: {
+      ...sharedNetworkConfig,
+      url: `https://mainnet.optimism.io`,
+    },
+    optimism_goerli: {
+      ...sharedNetworkConfig,
+      url: `https://goerli.optimism.io	`,
+    },
   },
+
+
   deterministicDeployment,
   etherscan: {
     apiKey: ETHERSCAN_API_KEY,

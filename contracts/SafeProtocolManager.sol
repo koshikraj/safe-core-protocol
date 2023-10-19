@@ -174,7 +174,7 @@ contract SafeProtocolManager is ISafeProtocolManager, RegistryManager, HooksMana
     function enablePlugin(
         address plugin,
         uint8 permissions
-    ) external noZeroOrSentinelPlugin(plugin) onlyPermittedModule(plugin, MODULE_TYPE_PLUGIN) onlyAccount {
+    ) external virtual noZeroOrSentinelPlugin(plugin) onlyPermittedModule(plugin, MODULE_TYPE_PLUGIN) onlyAccount {
         // address(0) check omitted because it is not expected to enable it as a plugin and
         // call to it would fail. Additionally, registry should not permit address(0) as an module.
         if (!ISafeProtocolPlugin(plugin).supportsInterface(type(ISafeProtocolPlugin).interfaceId))
@@ -203,11 +203,12 @@ contract SafeProtocolManager is ISafeProtocolManager, RegistryManager, HooksMana
         emit PluginEnabled(msg.sender, plugin, permissions);
     }
 
+    // Temperarily removing the onlyAccount check to allow on safe transactions
     /**
      * @notice Disable a plugin. This function should be called by account.
      * @param plugin Plugin to be disabled
      */
-    function disablePlugin(address prevPlugin, address plugin) external noZeroOrSentinelPlugin(plugin) onlyAccount {
+    function disablePlugin(address prevPlugin, address plugin) external noZeroOrSentinelPlugin(plugin) {
         PluginAccessInfo storage prevPluginInfo = enabledPlugins[msg.sender][prevPlugin];
         PluginAccessInfo storage pluginInfo = enabledPlugins[msg.sender][plugin];
 
