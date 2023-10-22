@@ -23,7 +23,7 @@ const argv : any = yargs
     .help(false)
     .version(false).argv;
 
-const { NODE_URL, MNEMONIC, INFURA_KEY, ETHERSCAN_API_KEY, SAFE_CORE_PROTOCOL_OWNER_ADDRESS } = process.env;
+const { NODE_URL, MNEMONIC, INFURA_KEY, ETHERSCAN_API_KEY, POLYGONSCAN_API_KEY, SAFE_CORE_PROTOCOL_OWNER_ADDRESS } = process.env;
 
 const deterministicDeployment = (network: string): DeterministicDeploymentInfo => {
   const info = getSingletonFactoryInfo(parseInt(network));
@@ -131,8 +131,24 @@ const config: HardhatUserConfig = {
 
   deterministicDeployment,
   etherscan: {
-    apiKey: ETHERSCAN_API_KEY,
-  },
+    apiKey: {
+      goerli: ETHERSCAN_API_KEY!,
+      polygon: POLYGONSCAN_API_KEY!,
+    },
+
+  customChains: [
+    {
+      network: "polygon",
+      chainId: 5,
+      urls: {
+        apiURL: "https://api.polygonscan.com/api",
+        browserURL: "https://polygonscan.com"
+      }
+    }
+  ],
+},
+
+
   namedAccounts: {
     deployer: {
       default: 0
@@ -142,6 +158,8 @@ const config: HardhatUserConfig = {
     }
   }
 };
+
+
 
 if (NODE_URL) {
   config.networks!.custom = {
